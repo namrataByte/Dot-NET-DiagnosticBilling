@@ -1,0 +1,77 @@
+﻿@model DiagnosticBilling.Models.BillViewModel
+
+@{
+    ViewData["Title"] = "Generated Bill";
+}
+
+<div style="font-family: Arial, sans-serif; margin: 30px; line-height: 1.6;">
+    <!-- Diagnostic Center Header -->
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="margin: 0;">Diagnostic Center</h2>
+        <h4 style="margin: 0; color: #555;">Your Trusted Healthcare Partner</h4>
+        <hr style="border: 1px solid #000;">
+    </div>
+
+    <!-- Bill and Patient Info in same row -->
+    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+        <!-- Patient Info (Left) -->
+        <div style="text-align: left;">
+            <p><strong>Patient's Name:</strong> @Model.patientName</p>
+            <p><strong>Age:</strong> @Model.patientAge</p>
+            <p><strong>Gender:</strong> @Model.patientGender</p>
+        </div>
+
+        <!-- Bill and Doctor Info (Right) -->
+        <div style="text-align: right;">
+            <p><strong>Bill ID:</strong> @Model.billId</p>
+            <p><strong>Date:</strong> @Model.TodayDate.ToString("dd-MM-yyyy")</p>
+            <p><strong>Doctor's Name:</strong> @Model.doctorName</p>
+            <p><strong>Specialty:</strong> @Model.specialty</p>
+        </div>
+    </div>
+
+    <!-- Selected Tests -->
+    <div style="margin-bottom: 1px;">
+        <!-- Reduced margin-bottom -->
+        @if (Model.SelectedTests != null && Model.SelectedTests.Any())
+        {
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
+                <thead>
+                    <tr>
+                        <th style="border-bottom: 2px solid #000; padding: 8px; text-align: left;">Test Name</th>
+                        <th style="border-bottom: 2px solid #000; padding: 8px; text-align: right;">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var test in Model.SelectedTests)
+                    {
+                        <tr>
+                            <td style="padding: 8px; border-bottom: 1px solid #ddd;">@test.TestName</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #ddd; text-align: right;">@test.Price.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No tests were selected for this bill.</p>
+        }
+    </div>
+
+    <!-- Total Cost -->
+    <div style="margin-bottom: 30px; text-align: right;">
+        <p style="font-size: 16px;"><strong>Total Cost:</strong> ₹@Model.TotalCost</p>
+    </div>
+
+    <hr style="border: 1px solid #000;">
+
+    <!-- Footer Section -->
+    <div style="text-align: center; margin-top: 40px; font-size: 14px; color: #555;">
+        <p>Thank you for choosing Diagnostic Center.</p>
+        <p>For any queries, contact us at: <strong>+91-1234567890</strong></p>
+        <p style="margin-top: 10px;">
+            <a href="@Url.Action("BillHistory", "Billing")" style="font-size: 16px; color: #fff; background-color: #007bff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Back to Bill History</a>
+        </p>
+    </div>
+</div>

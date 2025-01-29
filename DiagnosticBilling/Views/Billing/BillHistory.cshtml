@@ -1,0 +1,70 @@
+﻿@model IEnumerable<DiagnosticBilling.Models.Bill>
+
+<div class="container my-4">
+    <h1 class="text-center mb-4">Bill History</h1>
+
+    <!-- Select All and Deselect All Buttons -->
+    <div class="d-flex mb-3 gap-2">
+        <button type="button" id="select-all-btn" class="btn btn-primary btn-sm">Select All</button>
+        <button type="button" id="deselect-all-btn" class="btn btn-secondary btn-sm">Deselect All</button>
+    </div>
+
+    <form asp-action="DeleteSelected" method="post">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered text-center">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Select</th>
+                        <th>Bill ID</th>
+                        <th>Patient Name</th>
+                        <th>Doctor Name</th>
+                        <th>Total Cost</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var bill in Model)
+                        {
+                            <tr class="align-middle">
+                                <td>
+                                    <input type="checkbox" name="selectedBills" value="@bill.billId" />
+                                </td>
+                                <td>@bill.billId</td>
+                                <td>@bill.Patient.patientName</td>
+                                <td>@bill.Doctor.doctorName</td>
+                                <td>@bill.TotalCost.ToString("C")</td>
+                                <td>@bill.TodayDate.ToString("dd-MM-yyyy")</td>
+                                <td>
+                                    <a asp-action="Bill" asp-route-id="@bill.billId" class="btn btn-info btn-sm">View Details</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-danger">No bills available.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-between mt-3">
+            <button type="submit" class="btn btn-danger btn-sm">Delete Selected</button>
+            <a href="@Url.Action("Index", "Billing")" class="btn btn-secondary btn-sm">Back to Main</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    const selectAllButton = document.getElementById("select-all-btn");
+    const deselectAllButton = document.getElementById("deselect-all-btn");
+    const allCheckboxes = document.querySelectorAll('input[name="selectedBills"]');
+
+    selectAllButton.addEventListener("click", () => allCheckboxes.forEach(checkbox => checkbox.checked = true));
+    deselectAllButton.addEventListener("click", () => allCheckboxes.forEach(checkbox => checkbox.checked = false));
+</script>

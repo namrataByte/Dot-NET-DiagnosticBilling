@@ -1,0 +1,121 @@
+﻿@model DiagnosticBilling.Models.IndexViewModel
+
+@{
+    ViewData["Title"] = "Diagnostic Billing";
+}
+
+<div class="container my-4">
+    <h1 class="text-center mb-4">Diagnostic Center Billing</h1>
+
+    <!-- Billing Form Section -->
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <form asp-action="GenerateBill" method="post">
+                <!-- Doctor Information -->
+                <div class="mb-4">
+                    <h3 class="mb-3 text-primary">Doctor Information</h3>
+                    <label for="doctorId" class="form-label">Select Doctor:</label>
+                    <select id="doctorId" name="doctorId" class="form-select select2" required>
+                        @if (ViewBag.Doctors != null)
+                        {
+                            foreach (var doctor in ViewBag.Doctors)
+                            {
+                                <option value="@doctor.doctorId">@doctor.doctorName (@doctor.specialty)</option>
+                            }
+                        }
+                        else
+                        {
+                            <option disabled>No doctors available</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Patient Information -->
+                <div class="mb-4">
+                    <h3 class="mb-3 text-primary">Patient Information</h3>
+                    <label for="patientId" class="form-label">Select Patient:</label>
+                    <select id="patientId" name="patientId" class="form-select select2" required>
+                        @if (ViewBag.Patients != null && ((List<DiagnosticBilling.Models.Patient>)ViewBag.Patients).Any())
+                        {
+                            foreach (var patient in ViewBag.Patients as List<DiagnosticBilling.Models.Patient>)
+                            {
+                                <option value="@patient.patientId">@patient.patientName (Age: @patient.patientAge, Gender: @patient.patientGender)</option>
+                            }
+                        }
+                        else
+                        {
+                            <option disabled>No patients available</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Select Tests -->
+                <div class="mb-4">
+                    <h3 class="mb-3 text-primary">Select Tests</h3>
+                    @if (Model.Tests.Any())
+                    {
+                        @foreach (var test in Model.Tests)
+                        {
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="test-@test.TestId" name="selectedTestIds" value="@test.TestId" />
+                                <label class="form-check-label" for="test-@test.TestId">
+                                    @test.TestName - ₹@test.Price
+                                </label>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-danger">No tests available.</p>
+                    }
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-sm">Generate Bill</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Generated Bill Section -->
+    @if (ViewBag.SelectedTests != null)
+    {
+        <div class="card shadow-lg mt-4">
+            <div class="card-body">
+                <h3 class="mb-3 text-success">Generated Bill</h3>
+                <p><strong>Total Cost: ₹@ViewBag.TotalCost</strong></p>
+                <ul class="list-group">
+                    @foreach (var selectedTest in ViewBag.SelectedTests)
+                    {
+                        <li class="list-group-item">
+                            @selectedTest.TestName - ₹@selectedTest.Price
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+
+    <!-- Bill History Button -->
+    <div class="text-center mt-4">
+        <a href="@Url.Action("BillHistory", "Billing")" class="btn btn-secondary">View Bill History</a>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Load jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+
+    <!-- Load Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2({
+                placeholder: "Search or select an option",
+                allowClear: true
+            });
+        });
+    </script>
+}
+
+
